@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>upload file</title>
+    <title>convert file excel  </title>
     <link rel="stylesheet" href="">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -16,7 +16,7 @@
         <h5>Convert file excel</h5>
         <div class="col-sm-12 text-left pt-2 box">
             <form id="form" method="post" enctype="multipart/form-data">
-                <input class="form-control mb-3" type="file" id="excelfile"/>
+                <input class="form-control mb-3" type="file" name="excelfile" id="excelfile"/>
                 <select class="form-control mb-3 form-control-lg tuychon">
                     <option value="tiki">Tiki</option>
                     <option value="kiotviet">kiotviet</option>
@@ -91,22 +91,28 @@
     </div>
 </div>
 <!--<script src="jquery-1.10.2.min.js" type="text/javascript"></script>-->
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.7.7/xlsx.core.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xls/0.7.4-a/xls.core.min.js"></script>
+
 <script>
     function ExportToTable() {
         var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xlsx|.xls)$/;
         /*Checks whether the file is a valid excel file*/
         if (regex.test($("#excelfile").val().toLowerCase())) {
+            console.log('b1')
             var xlsxflag = false; /*Flag for checking whether excel is .xls format or .xlsx format*/
             if ($("#excelfile").val().toLowerCase().indexOf(".xlsx") > 0) {
                 xlsxflag = true;
             }
             /*Checks whether the browser supports HTML5*/
             if (typeof (FileReader) != "undefined") {
+                console.log('b2')
                 var reader = new FileReader();
                 reader.onload = function (e) {
                     var data = e.target.result;
+                    console.log('data',data)
                     /*Converts the excel data in to object*/
                     if (xlsxflag) {
                         var workbook = XLSX.read(data, { type: 'binary' });
@@ -127,6 +133,7 @@
                             var exceljson = XLS.utils.sheet_to_row_object_array(workbook.Sheets[y]);
                         }
                         if (exceljson.length > 0 && cnt == 0) {
+                            console.log(exceljson);
                             BindTableHeader(exceljson, '#liên_kết');
                             BindTableHeader(exceljson, '#tiêu_đề');
                             BindTableHeader(exceljson, '#mô_tả');
@@ -158,16 +165,18 @@
             }
             else {
                 alert("Sorry! Your browser does not support HTML5!");
+                location.reload();
             }
         }
         else {
             alert("Please upload a valid Excel file!");
+            location.reload();
         }
     }
 
     function BindTableHeader(jsondata, tableid) {/*Function used to get all column names from JSON and bind the html table header*/
         var columnSet = [];
-        var headerTr$ = $('<select class="form-control" id="select">');
+        var headerTr$ = $('<select class="form-control form-attr" id="select">');
         for (var i = 0; i < jsondata.length; i++) {
             var rowHash = jsondata[i];
             for (var key in rowHash) {
@@ -179,19 +188,23 @@
                 }
             }
         }
+        // lúc này nó bị mất cái #id của nó rồi còn đâu mà append
         $(tableid).append(headerTr$);
         return columnSet;
     }
-
+//day
     $(document).ready(function(){
         $("select.tuychon").change(function(){
+
             var selectedCountry = $(this).children("option:selected").val();
             if (selectedCountry == "custom"){
+                console.log('custom')
                 $('.config').addClass("show");
                 ExportToTable();
             }
-            else {
-                $(".config").remove();
+            else  {
+                $(".config").removeClass('show');
+                $(".form-attr").remove();
             }
 
         });
@@ -205,7 +218,6 @@
         var file_data = $('#excelfile').prop('files')[0];
         var form_data = new FormData();
         form_data.append('file', file_data);
-        alert(form_data);
         $.ajax({
             url: 'tiki.php', // point to server-side PHP script
             dataType: 'text',  // what to expect back from the PHP script, if anything

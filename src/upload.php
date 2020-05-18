@@ -14,8 +14,8 @@
 <div class="container pt-5">
     <div class="row">
         <h5>Convert file excel</h5>
-        <div class="col-sm-12 text-left pt-3 box">
-            <form action="" method="post" enctype="multipart/form-data">
+        <div class="col-sm-12 text-left pt-2 box">
+            <form id="form" method="post" enctype="multipart/form-data">
                 <input class="form-control mb-3" type="file" id="excelfile"/>
                 <select class="form-control mb-3 form-control-lg tuychon">
                     <option value="tiki">Tiki</option>
@@ -85,7 +85,7 @@
                     </div>
                     </div>
                 </div>
-                <input type="submit" name="up" value="Upload" class="btn btn-primary">
+                <input type="submit" name="up" value="Upload" class="btn btn-primary mb-3">
             </form>
         </div>
     </div>
@@ -194,6 +194,29 @@
                 $(".config").remove();
             }
 
+        });
+    });
+
+    var request;
+    // Bind to the submit event of our form
+    $("#form").submit(function(event){
+        // Prevent default posting of form - put here to work in case of errors
+        event.preventDefault();
+        var file_data = $('#excelfile').prop('files')[0];
+        var form_data = new FormData();
+        form_data.append('file', file_data);
+        alert(form_data);
+        $.ajax({
+            url: 'tiki.php', // point to server-side PHP script
+            dataType: 'text',  // what to expect back from the PHP script, if anything
+            cache: false,
+            contentType: false,
+            processData: false,
+            data: form_data,
+            type: 'post',
+            success: function(php_script_response){
+                alert(php_script_response); // display response from the PHP script, if any
+            }
         });
     });
 

@@ -1,3 +1,6 @@
 <?php
-	echo "hello";
+print_r($_FILES);
+// var_dump(;);
+die();
+	
 ?>

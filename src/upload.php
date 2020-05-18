@@ -108,7 +108,6 @@
             }
             /*Checks whether the browser supports HTML5*/
             if (typeof (FileReader) != "undefined") {
-                console.log('b2')
                 var reader = new FileReader();
                 reader.onload = function (e) {
                     var data = e.target.result;
@@ -133,7 +132,6 @@
                             var exceljson = XLS.utils.sheet_to_row_object_array(workbook.Sheets[y]);
                         }
                         if (exceljson.length > 0 && cnt == 0) {
-                            console.log(exceljson);
                             BindTableHeader(exceljson, '#liên_kết');
                             BindTableHeader(exceljson, '#tiêu_đề');
                             BindTableHeader(exceljson, '#mô_tả');
@@ -195,10 +193,9 @@
 //day
     $(document).ready(function(){
         $("select.tuychon").change(function(){
-
             var selectedCountry = $(this).children("option:selected").val();
             if (selectedCountry == "custom"){
-                console.log('custom')
+               
                 $('.config').addClass("show");
                 ExportToTable();
             }
@@ -208,14 +205,12 @@
             }
 
         });
-    });
-
-    var request;
     // Bind to the submit event of our form
     $("#form").submit(function(event){
         // Prevent default posting of form - put here to work in case of errors
         event.preventDefault();
         var file_data = $('#excelfile').prop('files')[0];
+
         var form_data = new FormData();
         form_data.append('file', file_data);
         $.ajax({
@@ -231,6 +226,7 @@
             }
         });
     });
+});
 
 </script>
 
